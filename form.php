@@ -11,19 +11,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
     //var_dump($name);
     //$name = isset($_POST['nom']);
     $name = isset($_POST['nom']) ? trim($_POST['nom']) : '';
+    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+    $message = isset($_POST['corp-message']) ? trim($_POST['corp-message']) : '';
 
     // Vérification que le champ n'est pas vide
-    if ($name !== '') {
+    if ($name !== '' && $email !== '' && $message !== '') {
         // Stockage du message dans la session
-        $_SESSION['message'] = "Merci $name !";
+        $_SESSION['message'] = "Nom : $name Email : $email Message : $message --------------";
+        $_SESSION['confirmation'] = "Merci pour votre confirmation, $name!";
 
         header("Location: form.php");
         exit();
     } else {
-        $_SESSION['message'] = "Veuillez indiquer votre nom !";
+        $_SESSION['message'] = "Veuillez remplir les champs suivants !";
     }
+
 }
 ?>
+
+
 <!doctype html>
 <html lang="fr">
 <head>
@@ -38,7 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 <?php
 // Affichage du message stocké en session
 if (isset($_SESSION['message'])) {
-    echo "<p>" . htmlspecialchars($_SESSION['message']) . "</p>";
+    echo "<p>" . htmlspecialchars($_SESSION['confirmation']) . "</p>";
+
+    echo file_put_contents("message.txt",$_SESSION['message'], FILE_APPEND);
     // suppression le message stocké en session
     unset($_SESSION['message']);
 }
@@ -48,8 +56,14 @@ if (isset($_SESSION['message'])) {
     <label for="name">Nom :</label>
     <input type="text" id="name" name="nom" required>
 
+    <label for="email">Entrer votre email: </label>
+    <input type="email" name="email" id="mail" required>
 
-    <button type="submit">Envoyer</button>
+    <label for="name">Message : </label>
+    <textarea type="text" id="form-message" name="corp-message" required></textarea>
+
+    <button>Envoyez</button>
+
 </form>
 </body>
 </html>
